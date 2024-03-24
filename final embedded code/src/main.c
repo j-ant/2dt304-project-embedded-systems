@@ -186,7 +186,7 @@ void bme680_task() {
         } else {
             printf("Failed to set sensor mode\n");
         }
-        vTaskDelay(2000); // Delay before next reading
+        vTaskDelay(2000);
     }
 }
 
