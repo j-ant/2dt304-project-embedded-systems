@@ -90,7 +90,7 @@ int getSensorDataAsJson(char* buffer, size_t bufferSize) {
 
 void publish_sensor_data(void) {
     char messageBuffer[256];
-    int messageLength = getSensorDataAsJson(messageBuffer, sizeof(messageBuffer)); // Use your sensor data retrieval function
+    int messageLength = getSensorDataAsJson(messageBuffer, sizeof(messageBuffer));
     if (messageLength > 0) {
 
         mqtt_publish(mqttClientInfo.client, MQTT_TOPIC, messageBuffer, messageLength, 0, 0, NULL, NULL);
