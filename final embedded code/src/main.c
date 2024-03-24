@@ -47,11 +47,6 @@ mqtt_client_t* mqtt_client;
 ip_addr_t mqtt_broker_ip_addr;
 struct bme680_dev sensor;
 
-// void initialize_network(void) {
-//     printf("Initializing network...\n");
-//     cyw43_arch_init();
-//     cyw43_arch_enable_sta_mode();
-// }
 
 
 void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t status) {
@@ -85,7 +80,6 @@ int getSensorDataAsJson(char* buffer, size_t bufferSize) {
         
         sensor.delay_ms(70);
         if (bme680_get_sensor_data(&data, &sensor) == BME680_OK) {
-            // Format the data into a JSON string
             return snprintf(buffer, bufferSize, SENSOR_DATA_FORMAT,
                             data.temperature / 100.0f, data.pressure / 100.0f,
                             data.humidity / 1000.0f, data.gas_resistance);
@@ -114,45 +108,8 @@ void mqtt_publish_task(void * pvParameters) {
     }
 }
 
-// void mqtt_publish_task(void * pvParameters) {
-//     while (1)
-//     {
-//         MQTTContext_t * pMQTTContext = (MQTTContext_t *) pvParameters;
-//         char messageBuffer[256];
-//         int messageLength = getSensorDataAsJson(messageBuffer, sizeof(messageBuffer));
-//         if (messageLength > 0) {
-
-//             if (messageLength >= 0) {
-//                 printf("Sensor data (JSON format):\n%s\n", messageBuffer);
-//             } else {
-//                 printf("Error: Failed to retrieve sensor data (error code: %d)\n", messageLength);
-//     }
-
-//             printf("HELLO");
-//             MQTTPublishInfo_t publishInfo = {
-//                 .pTopicName = MQTT_TOPIC,
-//                 .topicNameLength = strlen(MQTT_TOPIC),
-//                 .pPayload = "HELLO WORLD",
-//                 .payloadLength = strlen("HELLO WORLD"),
-//                 .qos = MQTTQoS0,
-//                 .retain = false,
-//                 .dup = false 
-//             };
-//             usPublishPacketIdentifier = MQTT_GetPacketId( pMQTTContext );
-//             printf("H");
-//             MQTTStatus_t result = MQTT_Publish( pMQTTContext, &publishInfo, usPublishPacketIdentifier );
-
-//             if (!(MQTT_Publish( pMQTTContext, &publishInfo, usPublishPacketIdentifier ) == MQTTSuccess))
-//             {
-//                 printf("E");
-//             }
-//         }
-//         vTaskDelay(2000);
-//     }
-// }
 
 void init_bme(void) {
-    // Sensor specific settings
     sensor.tph_sett.os_hum = BME680_OS_2X;
     sensor.tph_sett.os_pres = BME680_OS_4X;
     sensor.tph_sett.os_temp = BME680_OS_8X;
@@ -193,7 +150,6 @@ void setup() {
     }
 
     cyw43_arch_enable_sta_mode();
-    // initialize_network();
 
     i2c_init(I2C_PORT, 100 * 1000);
     gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
@@ -220,8 +176,7 @@ void bme680_task() {
     struct bme680_field_data data;
     while (1) {
         if (bme680_set_sensor_mode(&sensor) == BME680_OK) {
-            // Adjust the delay according to the sensor settings
-            sensor.delay_ms(70); // Wait for the measurement to complete
+            sensor.delay_ms(70);
             if (bme680_get_sensor_data(&data, &sensor) == BME680_OK) {
                 printf("Temperature: %.2f C, Pressure: %.2f hPa, Humidity: %.2f %%, Gas: %d ohms\n",
                     data.temperature / 100.0f, data.pressure / 100.0f, data.humidity / 1000.0f, data.gas_resistance);
