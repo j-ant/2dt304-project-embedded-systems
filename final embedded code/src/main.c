@@ -190,6 +190,7 @@ void bme680_task() {
     }
 }
 
+// A task to test LED blink, uncomment the task creation on main() to use
 void GreenLEDTask(void *param) {
   while (1)
   {
@@ -225,8 +226,13 @@ int main() {
     TaskHandle_t publishData = NULL;
     xTaskCreate(mqtt_publish_task, "Publish Task", 2048, NULL, 1, &publishData);
 
-    TaskHandle_t gLEDtask = NULL;
-    xTaskCreate(connect_wifi_task, "WiFi Task", 1024, NULL, 3, &gLEDtask);
+    TaskHandle_t wifiTask = NULL;
+    xTaskCreate(connect_wifi_task, "WiFi Task", 1024, NULL, 3, &wifiTask);
+
+
+    // Uncomment to test pico LED blink
+    // TaskHandle_t LEDTask = NULL;
+    // xTaskCreate(GreenLEDTask, "Led Task", 1024, NULL, 4, &LEDTask);
 
     vTaskStartScheduler();
     return 0;
